@@ -1,0 +1,1 @@
+SET(Luabind_DIR "${RADIANT_DEPENDENCY_ROOT}/Luabind-0.9.1/cmake")
