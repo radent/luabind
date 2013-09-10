@@ -1,4 +1,7 @@
+.last_build
 bin.v2
 bin
 doc/*.html
 doc/version.rst
+solutions/Debug
+solutions/Release
