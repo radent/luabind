@@ -34,9 +34,8 @@ if(BUILD_SHARED_LIBS)
 	add_definitions(-DLUABIND_DYNAMIC_LINK)
 endif()
 
-include_directories(${Boost_INCLUDE_DIRS}
-	"${CMAKE_CURRENT_SOURCE_DIR}"
-	${LUA_INCLUDE_DIRS})
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${LUA_INCLUDE_DIRS}")
 
 add_subdirectory(src)
 

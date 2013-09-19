@@ -19,12 +19,15 @@
     <ClCompile Include="..\src\error.cpp" />
     <ClCompile Include="..\src\exception_handler.cpp" />
     <ClCompile Include="..\src\function.cpp" />
+    <ClCompile Include="..\src\function_introspection.cpp" />
     <ClCompile Include="..\src\inheritance.cpp" />
     <ClCompile Include="..\src\link_compatibility.cpp" />
     <ClCompile Include="..\src\object_rep.cpp" />
     <ClCompile Include="..\src\open.cpp" />
+    <ClCompile Include="..\src\operator.cpp" />
     <ClCompile Include="..\src\pcall.cpp" />
     <ClCompile Include="..\src\scope.cpp" />
+    <ClCompile Include="..\src\set_package_preload.cpp" />
     <ClCompile Include="..\src\stack_content_by_name.cpp" />
     <ClCompile Include="..\src\weak_ref.cpp" />
     <ClCompile Include="..\src\wrapper_base.cpp" />
@@ -67,7 +70,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)/../../lua/package/lua/src;$(ProjectDir)/../../boost/install/include/boost-1_54;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -84,7 +87,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)/../../lua/package/lua/src;$(ProjectDir)/../../boost/install/include/boost-1_54;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
