@@ -5,3 +5,4 @@ doc/*.html
 doc/version.rst
 solutions/Debug
 solutions/Release
+solutions/x64
