@@ -52,42 +52,64 @@ public:
 private:
     lua_State* m_interpreter;
     int m_index;
+    int m_coref;
 };
 
 inline handle::handle()
   : m_interpreter(0)
   , m_index(LUA_NOREF)
+  , m_coref(LUA_NOREF)
 {}
 
 inline handle::handle(handle const& other)
   : m_interpreter(other.m_interpreter)
   , m_index(LUA_NOREF)
+  , m_coref(LUA_NOREF)
 {
     if (m_interpreter == 0) return;
     lua_rawgeti(m_interpreter, LUA_REGISTRYINDEX, other.m_index);
     m_index = luaL_ref(m_interpreter, LUA_REGISTRYINDEX);
+
+    if (other.m_coref != LUA_NOREF) {
+       lua_rawgeti(m_interpreter, LUA_REGISTRYINDEX, other.m_coref);
+       m_coref = luaL_ref(m_interpreter, LUA_REGISTRYINDEX);
+    }
 }
 
 inline handle::handle(lua_State* interpreter, int stack_index)
   : m_interpreter(interpreter)
   , m_index(LUA_NOREF)
+  , m_coref(LUA_NOREF)
 {
     lua_pushvalue(interpreter, stack_index);
     m_index = luaL_ref(interpreter, LUA_REGISTRYINDEX);
+
+    if (lua_pushthread(interpreter) == 1)
+       lua_pop(interpreter, 1);
+    else
+       m_coref = luaL_ref(interpreter, LUA_REGISTRYINDEX);
 }
 
 inline handle::handle(lua_State* main, lua_State* interpreter, int stack_index)
   : m_interpreter(main)
   , m_index(LUA_NOREF)
+  , m_coref(LUA_NOREF)
 {
     lua_pushvalue(interpreter, stack_index);
     m_index = luaL_ref(interpreter, LUA_REGISTRYINDEX);
+
+    if (lua_pushthread(interpreter) == 1)
+       lua_pop(interpreter, 1);
+    else
+       m_coref = luaL_ref(interpreter, LUA_REGISTRYINDEX);
 }
 
 inline handle::~handle()
 {
     if (m_interpreter && m_index != LUA_NOREF)
         luaL_unref(m_interpreter, LUA_REGISTRYINDEX, m_index);
+    if (m_interpreter && m_coref != LUA_NOREF)
+        luaL_unref(m_interpreter, LUA_REGISTRYINDEX, m_coref);
 }
 
 inline handle& handle::operator=(handle const& other)
@@ -100,6 +122,7 @@ inline void handle::swap(handle& other)
 {
     std::swap(m_interpreter, other.m_interpreter);
     std::swap(m_index, other.m_index);
+    std::swap(m_coref, other.m_coref);
 }
 
 inline void handle::push(lua_State* interpreter) const
