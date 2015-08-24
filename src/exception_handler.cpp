@@ -66,6 +66,10 @@ LUABIND_API void handle_exception_aux(lua_State* L)
     {
         push_exception_string(L, "c-string", str);
     }
+    catch (lua_exception const&)
+    {
+        throw;
+    }
     catch (...)
     {
         lua_pushstring(L, "Unknown C++ exception");
