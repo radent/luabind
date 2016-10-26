@@ -41,8 +41,9 @@ namespace luabind { namespace detail
     extern std::vector<std::unique_ptr<boost::pool<>>>       __pool_list;
     extern std::pair<std::size_t, std::size_t>               __pool_totals;
     extern std::atomic_size_t                                __total_requested_bytes;
+    extern bool                                              __use_memory_pools;
 
-    void init_memory_pools();
+    void init_memory_pools(bool enabled);
     size_t get_total_requested_bytes();
     size_t get_estimated_memory_pool_size();
    	void finalize(lua_State* L, class_rep* crep);
@@ -90,7 +91,7 @@ namespace luabind { namespace detail
 
             __total_requested_bytes += size;
 
-            if (size >= 512) {
+            if (size >= 512 || !__use_memory_pools) {
                 return std::malloc(size);
             }
 
@@ -110,7 +111,7 @@ namespace luabind { namespace detail
 
             __total_requested_bytes -= m_alloc_size;
 
-            if (m_alloc_size >= 512) {
+            if (m_alloc_size >= 512 || !__use_memory_pools) {
                 std::free(storage);
                 return;
             }

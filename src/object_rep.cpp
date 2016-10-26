@@ -36,9 +36,11 @@ namespace luabind { namespace detail
     boost::mutex                                 __pool_lock;
     std::pair<std::size_t, std::size_t>          __pool_totals;
     std::atomic_size_t                           __total_requested_bytes;
+    bool                                         __use_memory_pools;
 
-    void init_memory_pools() {
-        if (__pool_list.size() != 0) {
+    void init_memory_pools(bool enabled) {
+        __use_memory_pools = enabled;
+        if (__pool_list.size() != 0 || !__use_memory_pools) {
             return;
         }
         __pool_list.emplace_back(std::make_unique<boost::pool<>>(1, 1, 1));
