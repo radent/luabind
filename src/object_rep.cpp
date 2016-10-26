@@ -32,6 +32,42 @@
 
 namespace luabind { namespace detail
 {
+    std::vector<std::unique_ptr<boost::pool<>>>  __pool_list;
+    boost::mutex                                 __pool_lock;
+    std::pair<std::size_t, std::size_t>          __pool_totals;
+    std::atomic_size_t                           __total_requested_bytes;
+
+    void init_memory_pools() {
+        if (__pool_list.size() != 0) {
+            return;
+        }
+        __pool_list.emplace_back(std::make_unique<boost::pool<>>(1, 1, 1));
+        for (int i = 1; i < 512; i++) {
+            // Empirically, 48 and 54 byte allocs are in HUGE demand, so no
+            // need to grow those pools, just start allocating 64k blocks.
+            switch (i) {
+            case 48:
+                __pool_list.emplace_back(std::make_unique<boost::pool<>>(i, 1365, 1365));
+                break;
+            case 54:
+                __pool_list.emplace_back(std::make_unique<boost::pool<>>(i, 1213, 1213));
+                break;
+            default:
+                int min = std::min(64, 4096 / i);
+                int max = 4096 / i;
+                __pool_list.emplace_back(std::make_unique<boost::pool<>>(i, min, max));
+                break;
+            }
+        }
+    }
+
+    size_t get_estimated_memory_pool_size() {
+        return __pool_totals.second;
+    }
+
+    size_t get_total_requested_bytes() {
+        return __total_requested_bytes;
+    }
 
 	// dest is a function that is called to delete the c++ object this struct holds
 	object_rep::object_rep(instance_holder* instance, class_rep* crep)

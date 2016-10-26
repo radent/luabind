@@ -25,8 +25,11 @@
 #define LUABIND_OBJECT_REP_HPP_INCLUDED
 
 #include <cstdlib>
-
+#include <utility>
+#include <atomic>
+#include <memory>
 #include <boost/aligned_storage.hpp>
+#include <boost/pool/pool.hpp>
 #include <luabind/config.hpp>
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/instance_holder.hpp>
@@ -34,7 +37,15 @@
 
 namespace luabind { namespace detail
 {
-	void finalize(lua_State* L, class_rep* crep);
+    extern boost::mutex                                      __pool_lock;
+    extern std::vector<std::unique_ptr<boost::pool<>>>       __pool_list;
+    extern std::pair<std::size_t, std::size_t>               __pool_totals;
+    extern std::atomic_size_t                                __total_requested_bytes;
+
+    void init_memory_pools();
+    size_t get_total_requested_bytes();
+    size_t get_estimated_memory_pool_size();
+   	void finalize(lua_State* L, class_rep* crep);
 
 	// this class is allocated inside lua for each pointer.
 	// it contains the actual c++ object-pointer.
@@ -71,18 +82,44 @@ namespace luabind { namespace detail
                 m_instance->release();
         }
 
-		void* allocate(std::size_t size)
-		{
-			if (size <= 32)
-				return &m_instance_buffer;
-			return std::malloc(size);
-		}
+        void* allocate(std::size_t size) {
+            m_alloc_size = size;
+            if (size <= 32) {
+                return &m_instance_buffer;
+            }
+
+            __total_requested_bytes += size;
+
+            if (size >= 512) {
+                return std::malloc(size);
+            }
+
+            {
+                boost::mutex::scoped_lock lock(__pool_lock);
+                __pool_totals.first += size;
+                __pool_totals.second = std::max(__pool_totals.second, __pool_totals.first);
+                return __pool_list[size]->malloc();
+            }
+        }
 
 		void deallocate(void* storage)
 		{
-			if (storage == &m_instance_buffer)
-				return;
-			std::free(storage);
+            if (storage == &m_instance_buffer) {
+                return;
+            }
+
+            __total_requested_bytes -= m_alloc_size;
+
+            if (m_alloc_size >= 512) {
+                std::free(storage);
+                return;
+            }
+
+            {
+                boost::mutex::scoped_lock lock(__pool_lock);
+                __pool_totals.first -= m_alloc_size;
+                __pool_list[m_alloc_size]->free(storage);
+            }
 		}
 
 	private:
@@ -97,6 +134,7 @@ namespace luabind { namespace detail
         boost::aligned_storage<32> m_instance_buffer;
 		class_rep* m_classrep; // the class information about this object's type
         std::size_t m_dependency_cnt; // counts dependencies
+        std::size_t m_alloc_size;
 	};
 
 	template<class T>
