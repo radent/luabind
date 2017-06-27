@@ -2,6 +2,8 @@
 #define STD_SHAREDPTR_CONVERTER_HPP_INCLUDED STD_SHAREDPTR_CONVERTER_HPP_INCLUDED
 
 #include <boost/version.hpp>
+#include <luabind/shared_ptr_converter.hpp>
+#include <memory> // shared_ptr
 
 #if BOOST_VERSION >= 105300
 #include <boost/get_pointer.hpp>
@@ -47,5 +49,17 @@ namespace tr1 {
 } // namespace std
 
 #endif // if BOOST_VERSION < 105300
+
+namespace luabind {
+    using std::get_deleter;
+
+    template <typename T>
+    struct default_converter<std::shared_ptr<T> >:
+        detail::shared_ptr_converter<std::shared_ptr<T> > {};
+
+    template <typename T>
+    struct default_converter<std::shared_ptr<T> const&>:
+        detail::shared_ptr_converter<std::shared_ptr<T> > {};
+} // namespace luabind
 
 #endif

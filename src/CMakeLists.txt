@@ -21,6 +21,7 @@ set(LUABIND_SRCS
 	pcall.cpp
 	scope.cpp
 	set_package_preload.cpp
+	shared_ptr_converter.cpp
 	stack_content_by_name.cpp
 	weak_ref.cpp
 	wrapper_base.cpp)
@@ -62,6 +63,7 @@ set(LUABIND_API
 	../luabind/scope.hpp
 	../luabind/set_package_preload.hpp
 	../luabind/shared_ptr_converter.hpp
+	../luabind/std_shared_ptr_converter.hpp
 	../luabind/tag_function.hpp
 	../luabind/typeid.hpp
 	../luabind/value_wrapper.hpp

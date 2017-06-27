@@ -35,5 +35,26 @@ extern "C"
 }
 #endif
 
+#if LUA_VERSION_NUM < 502
+
+inline void lua_rawsetp(lua_State* L, int t, void const* k)
+{
+    lua_pushlightuserdata(L, const_cast<void*>(k));
+    lua_insert(L, -2); // Move key beneath value.
+    if (t < 0 && t > LUA_REGISTRYINDEX)
+        t -= 1; // Adjust for pushed k.
+    lua_rawset(L, t);
+}
+
+inline void lua_rawgetp(lua_State* L, int t, void const* k)
+{
+    lua_pushlightuserdata(L, const_cast<void*>(k));
+    if (t < 0 && t > LUA_REGISTRYINDEX)
+        t -= 1; // Adjust for pushed k.
+    lua_rawget(L, t);
+}
+
+#endif
+
 #endif
 

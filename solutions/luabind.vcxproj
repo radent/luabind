@@ -36,6 +36,7 @@
     <ClCompile Include="..\src\pcall.cpp" />
     <ClCompile Include="..\src\scope.cpp" />
     <ClCompile Include="..\src\set_package_preload.cpp" />
+    <ClCompile Include="..\src\shared_ptr_converter.cpp" />
     <ClCompile Include="..\src\stack_content_by_name.cpp" />
     <ClCompile Include="..\src\weak_ref.cpp" />
     <ClCompile Include="..\src\wrapper_base.cpp" />
