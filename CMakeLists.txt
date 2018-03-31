@@ -29,13 +29,20 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	include(CTest)
 endif()
 
+if(NOT MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+endif()
+
 set(BUILD_SHARED_LIBS ${BUILD_SHARED_LUABIND})
 if(BUILD_SHARED_LIBS)
 	add_definitions(-DLUABIND_DYNAMIC_LINK)
 endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${Boost_INCLUDE_DIRS}")
 include_directories("${LUA_INCLUDE_DIRS}")
+
+link_directories("${LUA_LIBRARY_DIR}")
 
 add_subdirectory(src)
 
