@@ -1010,7 +1010,12 @@ namespace detail
               "luabind::set_error_callback()");
           std::terminate();
 #endif
+
+# ifdef _MSC_VER
           return *(typename boost::remove_reference<T>::type*)0;
+# else
+          __builtin_trap();
+# endif
       }
   };
 
