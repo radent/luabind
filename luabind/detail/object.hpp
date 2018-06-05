@@ -780,6 +780,11 @@ namespace adl
           m_handle.swap(other.m_handle);
       }
 
+      inline int index() const
+      {
+          return m_handle.index();
+      }
+
   private:
       handle m_handle;
   };

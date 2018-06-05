@@ -49,6 +49,11 @@ public:
 
     void replace(lua_State* interpreter, int stack_index);
 
+    inline int index() const
+    {
+        return m_index;
+    }
+
 private:
     lua_State* m_interpreter;
     int m_index;
