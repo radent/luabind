@@ -5,8 +5,8 @@ ifeq ($(RADIANT_OS_PLATFORM), macos)
 .PHONY: default
 default:
 	mkdir -p build
-	$(CMAKE) -H. -Bbuild -DCMAKE_BUILD_TYPE=RelWithDebInfo -G $(RADIANT_CMAKE_GENERATOR) -DBOOST_ROOT=$(RADIANT_BOOST_ROOT) -DLUA_INCLUDE_DIR=../lua/package/lua-5.1.5-coco/src/ -DLUA_LIBRARIES=lua -DLUA_LIBRARY_DIR=../lua/package/lua-5.1.5-coco/src/ -DBUILD_TESTING=false
-	cmake --build build
+	$(CMAKE) -H. -Bbuild -G $(RADIANT_CMAKE_GENERATOR) -DBOOST_ROOT=$(RADIANT_BOOST_ROOT) -DLUA_INCLUDE_DIR=../lua/package/lua-5.1.5-coco/src/ -DLUA_LIBRARIES=lua -DLUA_LIBRARY_DIR=../lua/package/lua-5.1.5-coco/src/ -DBUILD_TESTING=false
+	cmake --build build --config RelWithDebInfo
 
 .PHONY: clean
 clean:
@@ -31,4 +31,5 @@ clean:
 	-rm -rf solutions/debug
 	-rm -rf solutions/release
 	-rm -rf build
+
 endif
