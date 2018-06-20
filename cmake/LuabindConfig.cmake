@@ -13,8 +13,8 @@ IF(WIN32)
     ENDIF()
 ELSEIF(APPLE)
     SET(Luabind_LIBRARIES
-        optimized ${Luabind_ROOT}/build/src/libluabind.a
-        debug     ${Luabind_ROOT}/build/src/libluabind.a)
+        optimized ${Luabind_ROOT}/build/src/RelWithDebInfo/libluabind.a
+        debug     ${Luabind_ROOT}/build/src/RelWithDebInfo/libluabind.a)
 ENDIF()
 
 set(Luabind_FOUND TRUE)
